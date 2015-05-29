@@ -10,7 +10,7 @@ public interface IRenderable {
 
 	//Constants for types passed to the control function.
 	//You can add more here, or add model-specific constants in the model class.
-	public static final int TOGGLE_LIGHT_SPHERES = 0;
+	public static final int TOGGLE_LIGHTS = 0;
 	public static final int TOGGLE_AXES = 1;
 	
 	/**

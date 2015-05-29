@@ -29,7 +29,7 @@ public class Empty implements IRenderable {
 	@Override
 	public void control(int type, Object params) {
 		switch (type) {
-		case IRenderable.TOGGLE_LIGHT_SPHERES:
+		case IRenderable.TOGGLE_LIGHTS:
 		{
 			isLightSpheres = ! isLightSpheres;
 			break;

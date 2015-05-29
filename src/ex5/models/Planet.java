@@ -22,7 +22,7 @@ public class Planet implements IRenderable {
 	 */
 	public Planet(Planets name) {
 		this.name = name;
-		this.angle = randomAngle();
+		this.angle = 0;//randomAngle();
 		this.isAxes = true;
 	}
 	
@@ -40,17 +40,17 @@ public class Planet implements IRenderable {
 	 */
 	private double planetRadius() {
 		switch (name) {
-			case Sun:		return 0.5;
-			case Mercury: 	return 0.5;
-			case Venus:		return 0.5;
+			case Sun:		return 1.0;
+			case Mercury: 	return 0.3;
+			case Venus:		return 0.4;
 			case Earth:		return 0.5;
-			case Mars:		return 0.5;
-			case Jupiter:	return 0.5;
-			case Saturn:	return 0.5;
+			case Mars:		return 0.4;
+			case Jupiter:	return 0.7;
+			case Saturn:	return 0.6;
 			case Uranus:	return 0.5;
 			case Neptune:	return 0.5;
-			case Pluto:		return 0.5;
-			case Moon:		return 0.5;
+			case Pluto:		return 0.1;
+			case Moon:		return 0.1;
 			default:		return 0.5;
 		}
 	}
@@ -61,18 +61,18 @@ public class Planet implements IRenderable {
 	 */
 	private double orbitRadius() {
 		switch (name) {
-			case Sun:		return 0;
-			case Mercury: 	return 2;
-			case Venus:		return 4;
-			case Earth:		return 6;
-			case Mars:		return 8;
-			case Jupiter:	return 10;
-			case Saturn:	return 12;
-			case Uranus:	return 14;
-			case Neptune:	return 16;
-			case Pluto:		return 18;
-			case Moon:		return 20;
-			default:		return 22;
+			case Sun:		return 0.0;
+			case Mercury: 	return 1.5;
+			case Venus:		return 2.5;
+			case Earth:		return 4.0;
+			case Mars:		return 6.0;
+			case Jupiter:	return 9.0;
+			case Saturn:	return 12.0;
+			case Uranus:	return 14.0;
+			case Neptune:	return 16.0;
+			case Pluto:		return 18.0;
+			case Moon:		return 20.0;
+			default:		return 22.0;
 		}
 	}
 	
@@ -125,18 +125,18 @@ public class Planet implements IRenderable {
 	 */
 	private double orbitalInclination() {
 		switch (name) {
-			case Sun:		return 0;
-			case Mercury: 	return 7;
+			case Sun:		return 0.0;
+			case Mercury: 	return 7.0;
 			case Venus:		return 3.39;
-			case Earth:		return 0;
+			case Earth:		return 0.0;
 			case Mars:		return 1.85;
 			case Jupiter:	return 1.3;
 			case Saturn:	return 2.49;
 			case Uranus:	return 0.77;
 			case Neptune:	return 1.77;
 			case Pluto:		return 17.2;
-			case Moon:		return 0;
-			default:		return 0;
+			case Moon:		return 0.0;
+			default:		return 0.0;
 		}
 	}
 	
@@ -146,18 +146,18 @@ public class Planet implements IRenderable {
 	 */
 	private double axialTilt() {
 		switch (name) {
-			case Sun:		return 0;
-			case Mercury: 	return 2;
-			case Venus:		return 2;
+			case Sun:		return 0.0;
+			case Mercury: 	return 2.0;
+			case Venus:		return 2.0;
 			case Earth:		return 23.45;
-			case Mars:		return 24;
+			case Mars:		return 24.0;
 			case Jupiter:	return 3.1;
 			case Saturn:	return 26.7;
 			case Uranus:	return 97.9;
 			case Neptune:	return 28.8;
 			case Pluto:		return 57.5;
-			case Moon:		return 0;
-			default:		return 0;
+			case Moon:		return 0.0;
+			default:		return 0.0;
 		}
 	}
 	
@@ -169,21 +169,18 @@ public class Planet implements IRenderable {
 		// Move the planet somewhere on its orbit
 		double x = this.orbitRadius() * Math.cos(angle);
 		double z = this.orbitRadius() * Math.sin(angle);
-		gl.glTranslated(x, 0, z);
+		gl.glTranslated(x, 0.0, z);
 		
 		// Rotate around Z to mimic axial tilt
-		gl.glRotated(this.axialTilt(), 0, 0, 1);
+		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
 		
 		// Mix some colors
-		float[] black = {0, 0, 0};
 		float[] compArray = new float[3];
 		this.planetColor().getColorComponents(compArray);
-		//gl.glColor3fv(compArray, 0);
+		gl.glColor3fv(compArray, 0);
 		
 		// Set material properties
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, black, 0);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, compArray, 0);
-		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, black, 0);
 		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
@@ -193,14 +190,13 @@ public class Planet implements IRenderable {
 	public void renderOrbit(GL gl) {
 		
 		// Disable lighting before drawing
-		boolean flag = gl.glIsEnabled(GL.GL_LIGHTING);
 		gl.glDisable(GL.GL_LIGHTING);
 		
 		// Changing stuff to draw the orbit
 		gl.glPushMatrix();
 		
 		// Rotate around Z to mimic orbital inclination
-		gl.glRotated(this.orbitalInclination(), 0, 0, 1);
+		gl.glRotated(this.orbitalInclination(), 0.0, 0.0, 1.0);
 		
 		// Change drawing color to desired orbit color
 		float[] compArray = new float[3];
@@ -208,19 +204,17 @@ public class Planet implements IRenderable {
 		gl.glColor3fv(compArray, 0);
 		
 		// Draw a line loop
+		gl.glLineWidth(0.5f);
 		DrawCircle(gl, this.orbitRadius(), 100);
 		
-		// Re-enable lighting if necessary 
-		if(flag) {
-			gl.glEnable(GL.GL_LIGHTING);
-		}
+		// Re-enable lighting
+		gl.glEnable(GL.GL_LIGHTING);
 		
 	}
 	
 	public void renderAxes(GL gl) {
 		
 		// Disable lighting before drawing
-		boolean flag = gl.glIsEnabled(GL.GL_LIGHTING);
 		gl.glDisable(GL.GL_LIGHTING);
 		
 		// Set a dynamic length for the axes
@@ -232,27 +226,56 @@ public class Planet implements IRenderable {
 		gl.glBegin(GL.GL_LINES);
 		
 		// X axis is RED
-		gl.glColor3d(1, 0, 0);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(length, 0, 0);
+		gl.glColor3d(1.0, 0.0, 0.0);
+		gl.glVertex3d(0.0, 0.0, 0.0);
+		gl.glVertex3d(length, 0.0, 0.0);
 		
 		// Y axis is GREEN
-		gl.glColor3d(0, 1, 0);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, length, 0);
+		gl.glColor3d(0.0, 1.0, 0.0);
+		gl.glVertex3d(0.0, 0.0, 0.0);
+		gl.glVertex3d(0.0, length, 0.0);
 		
 		// Z axis is BLUE
-		gl.glColor3d(0, 0, 1);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, 0, length);
+		gl.glColor3d(0.0, 0.0, 1.0);
+		gl.glVertex3d(0.0, 0.0, 0.0);
+		gl.glVertex3d(0.0, 0.0, length);
 		
 		// End drawing
 		gl.glEnd();
 		
-		// Re-enable lighting if necessary 
-		if(flag) {
-			gl.glEnable(GL.GL_LIGHTING);
-		}
+		// Re-enable lighting
+		gl.glEnable(GL.GL_LIGHTING);
+		
+	}
+	
+	private void renderRing(GL gl, GLU glu, GLUquadric quad) {
+		
+		// Changing stuff to draw the ring
+		gl.glPushMatrix();
+		
+		// Mix some colors
+		float[] compArray = new float[3];
+		this.planetColor().getColorComponents(compArray);
+//		gl.glColor3fv(compArray, 0);
+		
+		// Set material properties
+		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, compArray, 0);
+		
+		// gluDisc renders a disc on the Z=0 plane,
+		// so we need to rotate 90 degrees around X
+		gl.glRotated(90.0, 1.0, 0.0, 0.0);
+		
+		// Draw the up-facing disc
+		glu.gluDisk(quad, 0.75, 1.0, 50, 50);
+		
+	    // Flip side
+		gl.glRotated(180.0, 0.0, 1.0, 0.0);
+	    
+		// Draw the down-facing disc
+	    glu.gluDisk(quad, 0.75, 1.0, 50, 50);
+	    
+	    // Go back
+	    gl.glPopMatrix();
 		
 	}
 	
@@ -268,8 +291,9 @@ public class Planet implements IRenderable {
 		// Draw the planet (second push - axial tilt)
 		renderPlanet(gl, glu, quad);
 		
+		// Draw the ring if it's saturn (push & pop inside)
 		if (name.equals(Planets.Saturn)) {
-			System.out.println("saturn");
+			renderRing(gl, glu, quad);
 		}
 		
 		// Draw the axes (no push - no need)
@@ -327,18 +351,18 @@ public class Planet implements IRenderable {
 		double t;
 
 		double x = r; 	// We start at angle = 0 
-		double y = 0; 
+		double z = 0; 
 	    
 		gl.glBegin(GL.GL_LINE_LOOP); 
 		for(int ii = 0; ii < num_segments; ii++) { 
 			 
 			// Output vertex
-			gl.glVertex3d(x, 0, y);
+			gl.glVertex3d(x, 0.0, z);
 	        
 			// Apply the rotation matrix
 			t = x;
-			x = c * x - s * y;
-			y = s * t + c * y;
+			x = c * x - s * z;
+			z = s * t + c * z;
 			
 		} 
 		gl.glEnd();
