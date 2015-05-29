@@ -13,6 +13,7 @@ public class Planet implements IRenderable {
 	
 	private Planets name; 		// The planet's name
 	private int angle; 			// The planet's location along its orbit
+	
 	private boolean isAxes; 	// Show axes?
 	
 	/**
@@ -126,7 +127,7 @@ public class Planet implements IRenderable {
 		switch (name) {
 			case Sun:		return 0;
 			case Mercury: 	return 7;
-			case Venus:		return 30;//3.39;
+			case Venus:		return 3.39;
 			case Earth:		return 0;
 			case Mars:		return 1.85;
 			case Jupiter:	return 1.3;
@@ -147,7 +148,7 @@ public class Planet implements IRenderable {
 		switch (name) {
 			case Sun:		return 0;
 			case Mercury: 	return 2;
-			case Venus:		return 30;//2;
+			case Venus:		return 2;
 			case Earth:		return 23.45;
 			case Mars:		return 24;
 			case Jupiter:	return 3.1;
@@ -177,7 +178,7 @@ public class Planet implements IRenderable {
 		float[] black = {0, 0, 0};
 		float[] compArray = new float[3];
 		this.planetColor().getColorComponents(compArray);
-		gl.glColor3fv(compArray, 0);
+		//gl.glColor3fv(compArray, 0);
 		
 		// Set material properties
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, black, 0);
@@ -267,6 +268,10 @@ public class Planet implements IRenderable {
 		// Draw the planet (second push - axial tilt)
 		renderPlanet(gl, glu, quad);
 		
+		if (name.equals(Planets.Saturn)) {
+			System.out.println("saturn");
+		}
+		
 		// Draw the axes (no push - no need)
 		if (isAxes) {
 			renderAxes(gl);
@@ -288,7 +293,7 @@ public class Planet implements IRenderable {
 	public void control(int type, Object params) {
 
 		switch (type) {
-	    	case 1: 
+	    	case IRenderable.TOGGLE_AXES: 
 	    		isAxes = !isAxes;
 	    		break;
 		}
