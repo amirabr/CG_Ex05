@@ -247,14 +247,18 @@ public class Viewer implements GLEventListener {
 		boolean flag = gl.glIsEnabled(GL.GL_LIGHTING);
 		gl.glDisable(GL.GL_LIGHTING);
 		gl.glBegin(GL.GL_LINES);
+		
+		// X axis is RED
 		gl.glColor3d(1, 0, 0);
 		gl.glVertex3d(0, 0, 0);
 		gl.glVertex3d(10, 0, 0);
 		
+		// Y axis is GREEN
 		gl.glColor3d(0, 1, 0);
 		gl.glVertex3d(0, 0, 0);
 		gl.glVertex3d(0, 10, 0);
 		
+		// Z axis is BLUE
 		gl.glColor3d(0, 0, 1);
 		gl.glVertex3d(0, 0, 0);
 		gl.glVertex3d(0, 0, 10);
