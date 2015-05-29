@@ -1,11 +1,16 @@
 package ex5.models;
 
 import java.awt.Color;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+
+import com.sun.opengl.util.GLUT;
 
 public class Planet implements IRenderable {
 	
@@ -14,7 +19,6 @@ public class Planet implements IRenderable {
 	private Planets name; 		// The planet's name
 	private Planet moon; 		// The planet's moon
 	private int angle; 			// The planet's location along its orbit
-	
 	private boolean isAxes; 	// Show axes?
 	
 	/**
@@ -22,13 +26,16 @@ public class Planet implements IRenderable {
 	 * @param name - the planet's name
 	 */
 	public Planet(Planets name) {
+		
 		this.name = name;
 		this.angle = randomAngle();
 		this.isAxes = true;
 		
+		// Only earth has a moon
 		if (this.name.equals(Planets.Earth)) {
 			this.moon = new Planet(Planets.Moon);
 		}
+		
 	}
 	
 	/**
@@ -77,7 +84,7 @@ public class Planet implements IRenderable {
 			case Neptune:	return 16.0;
 			case Pluto:		return 18.0;
 			case Moon:		return 0.7;
-			default:		return 22.0;
+			default:		return 25.0;
 		}
 	}
 	
@@ -108,20 +115,6 @@ public class Planet implements IRenderable {
 	 */
 	private Color orbitColor() {
 		return new Color(179, 252, 252);
-		/*switch (name) {
-			case Sun:		return new Color(0, 1, 1);
-			case Mercury: 	return new Color(0, 1, 1);
-			case Venus:		return new Color(0, 1, 1);
-			case Earth:		return new Color(0, 1, 1);
-			case Mars:		return new Color(0, 1, 1);
-			case Jupiter:	return new Color(0, 1, 1);
-			case Saturn:	return new Color(0, 1, 1);
-			case Uranus:	return new Color(0, 1, 1);
-			case Neptune:	return new Color(0, 1, 1);
-			case Pluto:		return new Color(0, 1, 1);
-			case Moon:		return new Color(0, 1, 1);
-			default:		return new Color(0, 1, 1);
-		}*/
 	}
 	
 	/**
@@ -166,6 +159,12 @@ public class Planet implements IRenderable {
 		}
 	}
 	
+	/**
+	 * Renders the planet.
+	 * @param gl
+	 * @param glu
+	 * @param quad
+	 */
 	public void renderPlanet(GL gl, GLU glu, GLUquadric quad) {
 		
 		// Changing stuff to draw the planet
@@ -179,19 +178,21 @@ public class Planet implements IRenderable {
 		// Rotate around Z to mimic axial tilt
 		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
 		
-		// Mix some colors
+		// Set material properties
 		float[] compArray = new float[3];
 		this.planetColor().getColorComponents(compArray);
-		gl.glColor3fv(compArray, 0);
-		
-		// Set material properties
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, compArray, 0);
+//		gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 100f);
 		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
 		
 	}
 	
+	/**
+	 * Renders the orbit.
+	 * @param gl
+	 */
 	public void renderOrbit(GL gl) {
 		
 		// Disable lighting before drawing
@@ -217,6 +218,10 @@ public class Planet implements IRenderable {
 		
 	}
 	
+	/**
+	 * Renders the axes.
+	 * @param gl
+	 */
 	public void renderAxes(GL gl) {
 		
 		// Disable lighting before drawing
@@ -253,17 +258,21 @@ public class Planet implements IRenderable {
 		
 	}
 	
+	/**
+	 * Renders the ring surrounding saturn.
+	 * @param gl
+	 * @param glu
+	 * @param quad
+	 */
 	private void renderRing(GL gl, GLU glu, GLUquadric quad) {
 		
 		// Changing stuff to draw the ring
 		gl.glPushMatrix();
 		
-		// Mix some colors
-		float[] compArray = new float[3];
-		this.planetColor().getColorComponents(compArray);
-//		gl.glColor3fv(compArray, 0);
-		
 		// Set material properties
+		float[] compArray = new float[3];
+		Color ringColor = new Color(241, 255, 92);
+		ringColor.getColorComponents(compArray);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, compArray, 0);
 		
 		// gluDisc renders a disc on the Z=0 plane,
@@ -296,14 +305,20 @@ public class Planet implements IRenderable {
 		// Draw the planet (second push - axial tilt)
 		renderPlanet(gl, glu, quad);
 		
-		// Draw the ring if it's saturn (push & pop inside)
+		// If it's saturn, draw the ring (push & pop inside)
 		if (name.equals(Planets.Saturn)) {
 			renderRing(gl, glu, quad);
 		}
 		
-		// Draw the moon if it's earth (push & pop inside)
+		// If it's earth, draw the moon (push & pop inside)
 		if (name.equals(Planets.Earth)) {
 			moon.render(gl);
+		}
+		
+		// If it's tea time, put the kettle on the fire!
+		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
+			GLUT glut = new GLUT();
+			glut.glutSolidTeapot(0.2);	
 		}
 		
 		// Draw the axes (no push - no need)
@@ -326,13 +341,16 @@ public class Planet implements IRenderable {
 	@Override
 	public void control(int type, Object params) {
 
+		// Which command was given?
 		switch (type) {
+		
 	    	case IRenderable.TOGGLE_AXES: 
 	    		isAxes = !isAxes;
 	    		if (name.equals(Planets.Earth)) {
 	    			moon.control(IRenderable.TOGGLE_AXES, null);
 	    		}
 	    		break;
+	    		
 		}
 		
 	}
@@ -392,6 +410,19 @@ public class Planet implements IRenderable {
 		int max = 360;
 		Random rand = new Random();
 		return rand.nextInt((max - min) + 1) + min;
+		
+	}
+	
+	/**
+	 * Returns the current hour in 24h format.
+	 * @return
+	 */
+	private int getCurrentHour() {
+		
+		Date date = new Date();   								// given date
+		Calendar calendar = GregorianCalendar.getInstance(); 	// creates a new calendar instance
+		calendar.setTime(date);   								// assigns calendar to given date 
+		return calendar.get(Calendar.HOUR_OF_DAY); 				// gets hour in 24h format
 		
 	}
 	

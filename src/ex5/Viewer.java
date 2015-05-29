@@ -129,10 +129,13 @@ public class Viewer implements GLEventListener {
 
         gl.glEnable(GL.GL_DEPTH_TEST); 	// Depth test
 		gl.glEnable(GL.GL_NORMALIZE); 	// Normal normalization
-		/*		
+				
 		gl.glEnable(GL.GL_LIGHTING); 	// Enable lighting
-		gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
-		*/
+		gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
+
+//		float[] f = {0.2f, 0.2f, 0.2f, 1.0f};
+//		gl.glLightModelfv(GL.GL_LIGHT_MODEL_AMBIENT, f, 0);
+		
 		// Initialize display callback timer
 		ani = new FPSAnimator(30, true);
 		ani.add(drawable);
@@ -150,6 +153,7 @@ public class Viewer implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		
 		GL gl = drawable.getGL();
+		GLU glu = new GLU();
 	    
 		// Remember the width and height of the canvas for the trackball
 	    canvasWidth = width;
@@ -158,9 +162,6 @@ public class Viewer implements GLEventListener {
 	    // Set the projection to perspective
 	    gl.glMatrixMode(GL.GL_PROJECTION);
 	    gl.glLoadIdentity();
-	    
-	    //gl.glFrustum(-0.1, 0.1, -0.1 * height / width, 0.1 * height / width, 0.1, 1000.0);
-	    GLU glu = new GLU();
 	    glu.gluPerspective(90, (double)width/height, 0.1, 1000);
 	    
 	}
@@ -252,17 +253,17 @@ public class Viewer implements GLEventListener {
 		// X axis is RED
 		gl.glColor3d(1, 0, 0);
 		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(10, 0, 0);
+		gl.glVertex3d(20, 0, 0);
 		
 		// Y axis is GREEN
 		gl.glColor3d(0, 1, 0);
 		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, 10, 0);
+		gl.glVertex3d(0, 20, 0);
 		
 		// Z axis is BLUE
 		gl.glColor3d(0, 0, 1);
 		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, 0, 10);
+		gl.glVertex3d(0, 0, 20);
 		
 		gl.glEnd();
 		if(flag)

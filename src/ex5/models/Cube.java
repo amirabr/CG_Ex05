@@ -11,47 +11,73 @@ public class Cube implements IRenderable {
 	@Override
 	public void render(GL gl) {
 
-		double r = 0.5D;
+		double r = 1.0;
 		
+		// We don't want the cube to be affected by lighting
+		gl.glDisable(GL.GL_LIGHTING);
+		
+		// Start drawing the cube
 		gl.glBegin(GL.GL_QUADS);
 		
-		gl.glColor3d(1.0D, 0.0D, 0.0D);
-	    gl.glVertex3d(-r, -r, r);
-	    gl.glVertex3d(r, -r, r);
-	    gl.glVertex3d(r, r, r);
-	    gl.glVertex3d(-r, r, r);
-	    
-	    gl.glColor3d(0.0D, 1.0D, 0.0D);
-	    gl.glVertex3d(-r, -r, -r);
-	    gl.glVertex3d(-r, -r, r);
-	    gl.glVertex3d(-r, r, r);
-	    gl.glVertex3d(-r, r, -r);
-	    
-	    gl.glColor3d(0.0D, 0.0D, 1.0D);
-	    gl.glVertex3d(r, -r, r);
-	    gl.glVertex3d(r, -r, -r);
-	    gl.glVertex3d(r, r, -r);
-	    gl.glVertex3d(r, r, r);
-	    
-	    gl.glColor3d(1.0D, 1.0D, 0.0D);
-	    gl.glVertex3d(r, r, -r);
-	    gl.glVertex3d(r, -r, -r);
-	    gl.glVertex3d(-r, -r, -r);
-	    gl.glVertex3d(-r, r, -r);
-	    
-	    gl.glColor3d(0.0D, 1.0D, 1.0D);
-	    gl.glVertex3d(-r, r, r);
-	    gl.glVertex3d(r, r, r);
-	    gl.glVertex3d(r, r, -r);
-	    gl.glVertex3d(-r, r, -r);
-	    
-	    gl.glColor3d(1.0D, 0.0D, 1.0D);
-	    gl.glVertex3d(-r, -r, -r);
-	    gl.glVertex3d(r, -r, -r);
-	    gl.glVertex3d(r, -r, r);
-	    gl.glVertex3d(-r, -r, r);
-	    
+		gl.glColor3d(0,0,1);
+		gl.glVertex3d(-r,-r,+r);
+		gl.glColor3d(1,0,1);
+		gl.glVertex3d(+r,-r,+r);
+		gl.glColor3d(1,1,1);
+		gl.glVertex3d(+r,+r,+r);
+		gl.glColor3d(0,1,1);
+		gl.glVertex3d(-r,+r,+r);
+		
+		gl.glColor3d(0,0,0);
+		gl.glVertex3d(-r,-r,-r);
+		gl.glColor3d(0,0,1);
+		gl.glVertex3d(-r,-r,+r);
+		gl.glColor3d(0,1,1);
+		gl.glVertex3d(-r,+r,+r);
+		gl.glColor3d(0,1,0);
+		gl.glVertex3d(-r,+r,-r);
+
+		gl.glColor3d(1,0,1);
+		gl.glVertex3d(+r,-r,+r);
+		gl.glColor3d(1,0,0);
+		gl.glVertex3d(+r,-r,-r);
+		gl.glColor3d(1,1,0);
+		gl.glVertex3d(+r,+r,-r);
+		gl.glColor3d(1,1,1);
+		gl.glVertex3d(+r,+r,+r);
+		
+		gl.glColor3d(1,1,0);
+		gl.glVertex3d(+r,+r,-r);
+		gl.glColor3d(1,0,0);
+		gl.glVertex3d(+r,-r,-r);
+		gl.glColor3d(0,0,0);
+		gl.glVertex3d(-r,-r,-r);
+		gl.glColor3d(0,1,0);
+		gl.glVertex3d(-r,+r,-r);			
+
+		gl.glColor3d(0,1,1);
+		gl.glVertex3d(-r,+r,+r);
+		gl.glColor3d(1,1,1);
+		gl.glVertex3d(+r,+r,+r);
+		gl.glColor3d(1,1,0);
+		gl.glVertex3d(+r,+r,-r);
+		gl.glColor3d(0,1,0);
+		gl.glVertex3d(-r,+r,-r);
+				
+		gl.glColor3d(0,0,0);
+		gl.glVertex3d(-r,-r,-r);
+		gl.glColor3d(1,0,0);
+		gl.glVertex3d(+r,-r,-r);
+		gl.glColor3d(1,0,1);
+		gl.glVertex3d(+r,-r,+r);
+		gl.glColor3d(0,0,1);
+		gl.glVertex3d(-r,-r,+r);	
+		
+		// End of cube
 	    gl.glEnd();
+	    
+	    // Re-enable lighting
+	    gl.glEnable(GL.GL_LIGHTING);
 		
 	}
 

@@ -24,7 +24,7 @@ import ex5.models.SolarSystem;
 
 public class App {
 	
-	static IRenderable[] models = {new SolarSystem(), new Empty(), new Cube()};
+	static IRenderable[] models = {new Empty(), new Cube(), new SolarSystem()};
 	static Point prevMouse;
 	static int currentModel;
 	static Frame frame;

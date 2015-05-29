@@ -8,10 +8,12 @@ import ex5.models.Planet.Planets;
 
 public class SolarSystem implements IRenderable {
 	
-	private Planet[] planets;
+	private Planet[] planets; 		// Planets array
+	private boolean isLights; 		// Show light spheres?
 	
-	private boolean isLights;
-	
+	/**
+	 * Constructor.
+	 */
 	public SolarSystem() {
 		
 		isLights = false;
@@ -19,6 +21,9 @@ public class SolarSystem implements IRenderable {
 		
 	}
 	
+	/**
+	 * Populate the planets array with actual planets.
+	 */
 	private void initPlanets() {
 		
 		planets = new Planet[10];
@@ -53,7 +58,8 @@ public class SolarSystem implements IRenderable {
 
 	@Override
 	public void init(GL gl) {
-
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -92,34 +98,36 @@ public class SolarSystem implements IRenderable {
 		return "Solar System";
 	}
 	
+	/**
+	 * Render the lights in the scene, and add light spheres if requested.
+	 * @param gl
+	 * @param glu
+	 * @param quad
+	 */
 	private void renderLights(GL gl, GLU glu, GLUquadric quad) {
 		
-		// First light (white) on top
-		float[] light0Position 	= {0.0f, 5.0f, 0.0f, 1.0f};
-		float[] light0Ambient 	= {0.1f, 0.1f, 0.1f};
-		float[] light0Diffuse 	= {1.0f, 1.0f, 1.0f};
-		float[] light0Specular 	= {0.1f, 0.1f, 0.1f};
+		// Light positions
+		float[] light0Position 	= {+10.0f, +10.0f, +10.0f, 1.0f};
+		float[] light1Position 	= {-10.0f, -10.0f, -10.0f, 1.0f};
 		
-		// Second light (red) on bottom
-		float[] light1Position 	= {0.0f, -5.0f, 0.0f, 1.0f};
-//		float[] light1Ambient 	= {0.1f, 0.1f, 0.1f};
-//		float[] light1Diffuse 	= {1.0f, 0.0f, 0.0f};
-//		float[] light1Specular 	= {0.1f, 0.1f, 0.1f};
+		// Light properties
+		float[] lightAmbient 	= {0.0f, 0.0f, 0.0f, 1.0f};
+		float[] lightDiffuse 	= {1.0f, 1.0f, 1.0f, 1.0f};
+		float[] lightSpecular 	= {1.0f, 1.0f, 1.0f, 1.0f};
 		
 		// Initialize light0
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, 	light0Position, 0);
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, 	light0Ambient, 	0);
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, 	light0Diffuse, 	0);
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, 	light0Specular, 0);
-		gl.glEnable(GL.GL_LIGHT0);
-
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, 	lightAmbient, 	0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, 	lightDiffuse, 	0);
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, 	lightSpecular,  0);
+		
 		// Initialize light1
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, 	light1Position, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, 	light0Ambient, 	0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, 	light0Diffuse, 	0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, 	light0Specular, 0);
-		gl.glEnable(GL.GL_LIGHT1);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, 	lightAmbient, 	0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, 	lightDiffuse, 	0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, 	lightSpecular,  0);
 		
+		// Show light spheres?
 		if (isLights) {
 			
 			gl.glDisable(GL.GL_LIGHTING);
@@ -127,20 +135,22 @@ public class SolarSystem implements IRenderable {
 			// Draw light0
 			gl.glPushMatrix();
 			gl.glTranslated(light0Position[0], light0Position[1], light0Position[2]);
-			gl.glColor3fv(light0Diffuse, 0);
+			gl.glColor3fv(lightDiffuse, 0);
 			glu.gluSphere(quad, 0.2, 50, 50);
 			gl.glPopMatrix();
 			
 			// Draw light1
 			gl.glPushMatrix();
 			gl.glTranslated(light1Position[0], light1Position[1], light1Position[2]);
-			gl.glColor3fv(light0Diffuse, 0);
+			gl.glColor3fv(lightDiffuse, 0);
 			glu.gluSphere(quad, 0.2, 50, 50);
 			gl.glPopMatrix();
 			
 		}
 
 		// Enable lighting
+		gl.glEnable(GL.GL_LIGHT0);
+		gl.glEnable(GL.GL_LIGHT1);
 		gl.glEnable(GL.GL_LIGHTING);
 		
 	}
