@@ -218,6 +218,7 @@ public class Viewer implements GLEventListener {
 	 */
 	public void toggleAxes() {
 		isAxes = !isAxes;
+		model.control(IRenderable.TOGGLE_AXES, null);
 		m_drawable.repaint();
 	}
 	

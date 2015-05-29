@@ -13,6 +13,7 @@ public class Planet implements IRenderable {
 	
 	private Planets name; 		// The planet's name
 	private int angle; 			// The planet's location along its orbit
+	private boolean isAxes; 	// Show axes?
 	
 	/**
 	 * Constructor.
@@ -21,6 +22,7 @@ public class Planet implements IRenderable {
 	public Planet(Planets name) {
 		this.name = name;
 		this.angle = randomAngle();
+		this.isAxes = true;
 	}
 	
 	/**
@@ -266,7 +268,9 @@ public class Planet implements IRenderable {
 		renderPlanet(gl, glu, quad);
 		
 		// Draw the axes (no push - no need)
-		renderAxes(gl);
+		if (isAxes) {
+			renderAxes(gl);
+		}
 		
 		// Two pops - bring it back to normal
 		gl.glPopMatrix();
@@ -282,7 +286,12 @@ public class Planet implements IRenderable {
 
 	@Override
 	public void control(int type, Object params) {
-		// TODO Auto-generated method stub
+
+		switch (type) {
+	    	case 1: 
+	    		isAxes = !isAxes;
+	    		break;
+		}
 		
 	}
 

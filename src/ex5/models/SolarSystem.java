@@ -24,7 +24,9 @@ public class SolarSystem implements IRenderable {
 
 	@Override
 	public void control(int type, Object params) {
-		// TODO Auto-generated method stub
+		
+		// TODO: send command to ALL the planets
+		planet.control(IRenderable.TOGGLE_AXES, null);
 		
 	}
 
