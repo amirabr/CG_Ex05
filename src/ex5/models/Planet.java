@@ -12,6 +12,7 @@ public class Planet implements IRenderable {
 	public enum Planets { Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Moon }
 	
 	private Planets name; 		// The planet's name
+	private Planet moon; 		// The planet's moon
 	private int angle; 			// The planet's location along its orbit
 	
 	private boolean isAxes; 	// Show axes?
@@ -22,8 +23,12 @@ public class Planet implements IRenderable {
 	 */
 	public Planet(Planets name) {
 		this.name = name;
-		this.angle = 0;//randomAngle();
+		this.angle = randomAngle();
 		this.isAxes = true;
+		
+		if (this.name.equals(Planets.Earth)) {
+			this.moon = new Planet(Planets.Moon);
+		}
 	}
 	
 	/**
@@ -71,7 +76,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 14.0;
 			case Neptune:	return 16.0;
 			case Pluto:		return 18.0;
-			case Moon:		return 20.0;
+			case Moon:		return 0.7;
 			default:		return 22.0;
 		}
 	}
@@ -135,7 +140,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 0.77;
 			case Neptune:	return 1.77;
 			case Pluto:		return 17.2;
-			case Moon:		return 0.0;
+			case Moon:		return 20.0;
 			default:		return 0.0;
 		}
 	}
@@ -296,6 +301,11 @@ public class Planet implements IRenderable {
 			renderRing(gl, glu, quad);
 		}
 		
+		// Draw the moon if it's earth (push & pop inside)
+		if (name.equals(Planets.Earth)) {
+			moon.render(gl);
+		}
+		
 		// Draw the axes (no push - no need)
 		if (isAxes) {
 			renderAxes(gl);
@@ -319,6 +329,9 @@ public class Planet implements IRenderable {
 		switch (type) {
 	    	case IRenderable.TOGGLE_AXES: 
 	    		isAxes = !isAxes;
+	    		if (name.equals(Planets.Earth)) {
+	    			moon.control(IRenderable.TOGGLE_AXES, null);
+	    		}
 	    		break;
 		}
 		

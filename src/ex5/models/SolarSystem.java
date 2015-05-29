@@ -1,6 +1,8 @@
 package ex5.models;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 
 import ex5.models.Planet.Planets;
 
@@ -18,7 +20,7 @@ public class SolarSystem implements IRenderable {
 	
 	private void initPlanets() {
 		
-		planets = new Planet[11];
+		planets = new Planet[10];
 		planets[0] = new Planet(Planets.Sun);
 		planets[1] = new Planet(Planets.Mercury);
 		planets[2] = new Planet(Planets.Venus);
@@ -29,19 +31,17 @@ public class SolarSystem implements IRenderable {
 		planets[7] = new Planet(Planets.Uranus);
 		planets[8] = new Planet(Planets.Neptune);
 		planets[9] = new Planet(Planets.Pluto);
-		planets[10] = new Planet(Planets.Moon);
 		
 	}
 
 	@Override
 	public void render(GL gl) {
 		
-		// Setup the lights
-		if (isLights) {
-			renderLights(gl);
-		} else {
-			gl.glDisable(GL.GL_LIGHTING);
-		}
+		GLU glu = new GLU();
+		GLUquadric quad = glu.gluNewQuadric();
+		
+		// Render the lights
+		renderLights(gl, glu, quad);
 		
 		// Render the planets
 		for (Planet p : planets) {
@@ -63,7 +63,7 @@ public class SolarSystem implements IRenderable {
 		// Which command was given?
 		switch (type) {
 		
-    		case IRenderable.TOGGLE_LIGHTS: 
+    		case IRenderable.TOGGLE_LIGHT_SPHERES: 
     			isLights = !isLights;
     			break;
     			
@@ -93,19 +93,19 @@ public class SolarSystem implements IRenderable {
 		return "Solar System";
 	}
 	
-	private void renderLights(GL gl) {
+	private void renderLights(GL gl, GLU glu, GLUquadric quad) {
 		
 		// First light (white) on top
 		float[] light0Position 	= {0.0f, 5.0f, 0.0f, 1.0f};
-		float[] light0Ambient 	= {0.1f, 0.1f, 0.1f, 1.0f};
-		float[] light0Diffuse 	= {1.0f, 1.0f, 1.0f, 1.0f};
-		float[] light0Specular 	= {0.1f, 0.1f, 0.1f, 1.0f};
+		float[] light0Ambient 	= {0.1f, 0.1f, 0.1f};
+		float[] light0Diffuse 	= {1.0f, 1.0f, 1.0f};
+		float[] light0Specular 	= {0.1f, 0.1f, 0.1f};
 		
 		// Second light (red) on bottom
 		float[] light1Position 	= {0.0f, -5.0f, 0.0f, 1.0f};
-		float[] light1Ambient 	= {0.1f, 0.1f, 0.1f, 1.0f};
-		float[] light1Diffuse 	= {1.0f, 1.0f, 1.0f, 1.0f};
-		float[] light1Specular 	= {0.1f, 0.1f, 0.1f, 1.0f};
+//		float[] light1Ambient 	= {0.1f, 0.1f, 0.1f};
+//		float[] light1Diffuse 	= {1.0f, 0.0f, 0.0f};
+//		float[] light1Specular 	= {0.1f, 0.1f, 0.1f};
 		
 		// Initialize light0
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, 	light0Position, 0);
@@ -116,15 +116,31 @@ public class SolarSystem implements IRenderable {
 
 		// Initialize light1
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, 	light1Position, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, 	light1Ambient, 	0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, 	light1Diffuse, 	0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, 	light1Specular, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, 	light0Ambient, 	0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, 	light0Diffuse, 	0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, 	light0Specular, 0);
 		gl.glEnable(GL.GL_LIGHT1);
 		
-		// Draw light0
+		if (isLights) {
+			
+			gl.glDisable(GL.GL_LIGHTING);
 		
-		// Draw light1
-		
+			// Draw light0
+			gl.glPushMatrix();
+			gl.glTranslated(light0Position[0], light0Position[1], light0Position[2]);
+			gl.glColor3fv(light0Diffuse, 0);
+			glu.gluSphere(quad, 0.2, 50, 50);
+			gl.glPopMatrix();
+			
+			// Draw light1
+			gl.glPushMatrix();
+			gl.glTranslated(light1Position[0], light1Position[1], light1Position[2]);
+			gl.glColor3fv(light0Diffuse, 0);
+			glu.gluSphere(quad, 0.2, 50, 50);
+			gl.glPopMatrix();
+			
+		}
+
 		// Enable lighting
 		gl.glEnable(GL.GL_LIGHTING);
 		

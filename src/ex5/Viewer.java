@@ -209,7 +209,7 @@ public class Viewer implements GLEventListener {
 	 * Toggle whether little spheres are shown at the location of the light sources.
 	 */
 	public void toggleLightSpheres() {
-		model.control(IRenderable.TOGGLE_LIGHTS, null);
+		model.control(IRenderable.TOGGLE_LIGHT_SPHERES, null);
 		m_drawable.repaint();
 	}
 
