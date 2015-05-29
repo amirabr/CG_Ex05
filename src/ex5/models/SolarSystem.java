@@ -14,6 +14,7 @@ public class SolarSystem implements IRenderable {
 	
 	public SolarSystem() {
 		
+		isLights = false;
 		initPlanets();
 		
 	}
@@ -53,8 +54,6 @@ public class SolarSystem implements IRenderable {
 	@Override
 	public void init(GL gl) {
 
-		isLights = true;
-		
 	}
 
 	@Override
