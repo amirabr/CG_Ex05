@@ -223,6 +223,14 @@ public class Viewer implements GLEventListener {
 		m_drawable.repaint();
 	}
 	
+	/**
+	 * Toggle bonus.
+	 */
+	public void toggleBonus() {
+		model.control(IRenderable.TOGGLE_BONUS, null);
+		m_drawable.repaint();
+	}
+	
 	public void toggleModelCamera() {
 		isModelCamera =! isModelCamera;
 		m_drawable.repaint();

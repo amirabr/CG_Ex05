@@ -73,6 +73,10 @@ public class App {
 				// Toggle light spheres
 				if (e.getKeyChar() == 'l')
 					viewer.toggleLightSpheres();
+				
+				// Toggle bonus
+				if (e.getKeyChar() == 'b')
+					viewer.toggleBonus();
 
 				// Show next model
 				if (e.getKeyChar() == 'm')

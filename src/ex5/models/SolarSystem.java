@@ -1,8 +1,12 @@
 package ex5.models;
 
+import java.util.Random;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+
+import com.sun.opengl.util.GLUT;
 
 import ex5.models.Planet.Planets;
 
@@ -10,6 +14,7 @@ public class SolarSystem implements IRenderable {
 	
 	private Planet[] planets; 		// Planets array
 	private boolean isLights; 		// Show light spheres?
+	private boolean isBonus;
 	
 	/**
 	 * Constructor.
@@ -17,6 +22,7 @@ public class SolarSystem implements IRenderable {
 	public SolarSystem() {
 		
 		isLights = false;
+		isBonus = false;
 		initPlanets();
 		
 	}
@@ -54,6 +60,10 @@ public class SolarSystem implements IRenderable {
 			p.render(gl);
 		}
 		
+		if (isBonus) {
+			mazalTov(gl);
+		}
+		
 	}
 
 	@Override
@@ -76,6 +86,10 @@ public class SolarSystem implements IRenderable {
     			for (Planet p : planets) {
     				p.control(IRenderable.TOGGLE_AXES, null);
     			}
+    			break;
+    			
+    		case IRenderable.TOGGLE_BONUS:
+    			isBonus = !isBonus;
     			break;
     		
 		}
@@ -154,5 +168,28 @@ public class SolarSystem implements IRenderable {
 		gl.glEnable(GL.GL_LIGHTING);
 		
 	}
-
+	
+	/**
+	 * This method does absolutely nothing.... maybe.....
+	 * @param gl
+	 */
+	private void mazalTov(GL gl) {
+		
+		GLUT glut = new GLUT();
+		Random rand = new Random();
+		
+		gl.glDisable(GL.GL_DEPTH_TEST); 
+		gl.glDisable(GL.GL_LIGHTING);
+		
+		for (int i=0; i<100; i++) {
+			gl.glColor3d(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+			gl.glWindowPos2d(rand.nextInt(601) - 100, rand.nextInt(601) - 100);
+			glut.glutBitmapString(rand.nextInt(5) + 4, "MAZAL TOV ALMOG :-)");
+		}
+		
+		gl.glEnable(GL.GL_LIGHTING);
+		gl.glEnable(GL.GL_DEPTH_TEST);
+		
+	}
+	
 }
