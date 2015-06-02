@@ -179,13 +179,20 @@ public class Planet implements IRenderable {
 		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
 		
 		// Set material properties
+		float[] black = {0.0f, 0.0f, 0.0f, 1.0f};
 		float[] compArray = new float[3];
 		this.planetColor().getColorComponents(compArray);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_DIFFUSE, compArray, 0);
-//		gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, 100f);
+		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, black, 0);
+		
+		// Rotate an extra 90 degrees to get the spheres up right
+		gl.glRotated(-90.0, 1.0, 0.0, 0.0);
 		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
+		
+		// Rotate back
+		gl.glRotated(90.0, 1.0, 0.0, 0.0);
 		
 	}
 	

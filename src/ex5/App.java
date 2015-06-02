@@ -76,7 +76,7 @@ public class App {
 				
 				// Toggle bonus
 				if (e.getKeyChar() == 'b')
-					viewer.toggleBonus();
+					viewer.toggleMessage();
 
 				// Show next model
 				if (e.getKeyChar() == 'm')

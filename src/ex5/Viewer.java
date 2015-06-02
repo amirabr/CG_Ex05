@@ -34,6 +34,9 @@ public class Viewer implements GLEventListener {
 			  			 0.0, 0.0, 1.0, 0.0,
 			  			 0.0, 0.0, 0.0, 1.0};
 
+	/**
+	 * Constructor.
+	 */
 	public Viewer() {
 		
 	}
@@ -132,9 +135,6 @@ public class Viewer implements GLEventListener {
 				
 		gl.glEnable(GL.GL_LIGHTING); 	// Enable lighting
 		gl.glLightModeli(GL.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
-
-//		float[] f = {0.2f, 0.2f, 0.2f, 1.0f};
-//		gl.glLightModelfv(GL.GL_LIGHT_MODEL_AMBIENT, f, 0);
 		
 		// Initialize display callback timer
 		ani = new FPSAnimator(30, true);
@@ -226,8 +226,8 @@ public class Viewer implements GLEventListener {
 	/**
 	 * Toggle bonus.
 	 */
-	public void toggleBonus() {
-		model.control(IRenderable.TOGGLE_BONUS, null);
+	public void toggleMessage() {
+		model.control(IRenderable.TOGGLE_MESSAGE, null);
 		m_drawable.repaint();
 	}
 	

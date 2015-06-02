@@ -14,7 +14,7 @@ public class SolarSystem implements IRenderable {
 	
 	private Planet[] planets; 		// Planets array
 	private boolean isLights; 		// Show light spheres?
-	private boolean isBonus;
+	private boolean isMessage; 		// Show special message?
 	
 	/**
 	 * Constructor.
@@ -22,7 +22,7 @@ public class SolarSystem implements IRenderable {
 	public SolarSystem() {
 		
 		isLights = false;
-		isBonus = false;
+		isMessage = false;
 		initPlanets();
 		
 	}
@@ -60,8 +60,8 @@ public class SolarSystem implements IRenderable {
 			p.render(gl);
 		}
 		
-		if (isBonus) {
-			mazalTov(gl);
+		if (isMessage) {
+			showMessage(gl);
 		}
 		
 	}
@@ -88,8 +88,8 @@ public class SolarSystem implements IRenderable {
     			}
     			break;
     			
-    		case IRenderable.TOGGLE_BONUS:
-    			isBonus = !isBonus;
+    		case IRenderable.TOGGLE_MESSAGE:
+    			isMessage = !isMessage;
     			break;
     		
 		}
@@ -127,7 +127,7 @@ public class SolarSystem implements IRenderable {
 		// Light properties
 		float[] lightAmbient 	= {0.0f, 0.0f, 0.0f, 1.0f};
 		float[] lightDiffuse 	= {1.0f, 1.0f, 1.0f, 1.0f};
-		float[] lightSpecular 	= {1.0f, 1.0f, 1.0f, 1.0f};
+		float[] lightSpecular 	= {0.1f, 0.1f, 0.1f, 1.0f};
 		
 		// Initialize light0
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, 	light0Position, 0);
@@ -173,7 +173,7 @@ public class SolarSystem implements IRenderable {
 	 * This method does absolutely nothing.... maybe.....
 	 * @param gl
 	 */
-	private void mazalTov(GL gl) {
+	private void showMessage(GL gl) {
 		
 		GLUT glut = new GLUT();
 		Random rand = new Random();

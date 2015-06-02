@@ -12,7 +12,7 @@ public interface IRenderable {
 	//You can add more here, or add model-specific constants in the model class.
 	public static final int TOGGLE_LIGHT_SPHERES = 0;
 	public static final int TOGGLE_AXES = 1;
-	public static final int TOGGLE_BONUS = 2;
+	public static final int TOGGLE_MESSAGE = 2;
 	
 	/**
 	 * Render the model
