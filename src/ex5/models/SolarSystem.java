@@ -1,3 +1,16 @@
+/**
+ * CG_EX5
+ * Amir Abramovitch 200336626
+ * Omri Gotlieb 302671136
+ * 
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * 
+ * PRESS 'B' FOR A GALACTIC EVENT
+ * 
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * 
+ */
+
 package ex5.models;
 
 import java.util.Random;

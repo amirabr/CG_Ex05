@@ -1,3 +1,10 @@
+/**
+ * CG_EX5
+ * Amir Abramovitch 200336626
+ * Omri Gotlieb 302671136
+ * 
+ */
+
 package ex5.math;
 
 import java.util.Scanner;
