@@ -233,14 +233,14 @@ public class Planet implements IRenderable {
 		// Bind the texture
 		tex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		tex.enable();
 		glu.gluQuadricTexture(quad, true);
 		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
 		
 		// Disable texture
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		tex.disable();
 		
 		// Rotate back
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
@@ -343,14 +343,14 @@ public class Planet implements IRenderable {
 		// Bind the texture
 		tex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		tex.enable();
 		glu.gluQuadricTexture(quad, true);
 		
 		// Draw the up-facing disc
 		glu.gluDisk(quad, 0.75, 1.0, 50, 50);
 		
 		// Disable texture
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		tex.disable();
 		
 	    // Flip side
 		gl.glRotated(180.0, 0.0, 1.0, 0.0);
@@ -358,14 +358,14 @@ public class Planet implements IRenderable {
 		// Bind the texture
 		tex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		tex.enable();
 		glu.gluQuadricTexture(quad, true);
 	    
 		// Draw the down-facing disc
 	    glu.gluDisk(quad, 0.75, 1.0, 50, 50);
 	    
 		// Disable texture
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		tex.disable();
 	    
 	    // Go back
 	    gl.glPopMatrix();
