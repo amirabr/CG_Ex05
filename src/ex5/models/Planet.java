@@ -29,7 +29,8 @@ public class Planet implements IRenderable {
 	
 	private Planets name; 		// The planet's name
 	private Planet moon; 		// The planet's moon
-	private Texture tex; 		// The planet's texture
+	private Texture planetTex; 	// The planet's texture
+	private Texture ringTex; 	// The planet's ring's texture
 	private double time; 		// The (global) time
 	private boolean isAxes; 	// Show axes?
 	
@@ -245,7 +246,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 0.72;
 			case Neptune:	return 0.67;
 			case Pluto:		return 6.38;
-			case Moon:		return 0.0;
+			case Moon:		return 1.0;
 			default:		return 0.0;
 		}
 	}
@@ -261,18 +262,24 @@ public class Planet implements IRenderable {
 		// Changing stuff to draw the planet
 		gl.glPushMatrix();
 		
-		// Rotate about Y to move the planet on its orbit
-		double orbitAngle = 360.0 * time / Math.log(this.orbitalPeriod()); 
-	    gl.glRotated(orbitAngle, 0.0, 1.0, 0.0);
-	    
-	    // Translate on X to move planet from center to orbit
-	    gl.glTranslated(this.orbitRadius(), 0.0, 0.0);
+		// The sun doesn't move
+		if (!name.equals(Planets.Sun)) {
 		
-		// Rotate about Z for axial tilt
-		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
-		
-		// Rotate about Y for self revolution
-		gl.glRotated(360.0 * (time / this.selfRevolution()), 0.0, 1.0, 0.0);
+			// Rotate about Y to move the planet on its orbit
+			double orbitAngle = 360.0 * time / Math.log(this.orbitalPeriod()); 
+		    gl.glRotated(orbitAngle, 0.0, 1.0, 0.0);
+		    
+		    // Translate on X to move planet from center to orbit
+		    gl.glTranslated(this.orbitRadius(), 0.0, 0.0);
+			
+			// Rotate about Z for axial tilt
+			gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
+			
+			// Rotate about Y for self revolution
+			double selfAngle = 360.0 * time / this.selfRevolution(); 
+			gl.glRotated(selfAngle, 0.0, 1.0, 0.0);
+			
+		}
 		
 		// Set material properties
 		float[] black = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -285,16 +292,16 @@ public class Planet implements IRenderable {
 		gl.glRotated(-90.0, 1.0, 0.0, 0.0);
 		
 		// Bind the texture
-		tex.bind();
+		planetTex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		tex.enable();
+		planetTex.enable();
 		glu.gluQuadricTexture(quad, true);
 		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
 		
 		// Disable texture
-		tex.disable();
+		planetTex.disable();
 		
 		// Rotate back
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
@@ -391,35 +398,32 @@ public class Planet implements IRenderable {
 		// so we need to rotate 90 degrees around X
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
 		
-		// Load the ring's texture instead of the planet's texture
-		initTexture(gl, "Bitmaps/saturnRing.bmp");
-		
 		// Bind the texture
-		tex.bind();
+		ringTex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		tex.enable();
+		ringTex.enable();
 		glu.gluQuadricTexture(quad, true);
 		
 		// Draw the up-facing disc
 		glu.gluDisk(quad, 0.75, 1.0, 50, 50);
 		
 		// Disable texture
-		tex.disable();
+		ringTex.disable();
 		
 	    // Flip side
 		gl.glRotated(180.0, 0.0, 1.0, 0.0);
 		
 		// Bind the texture
-		tex.bind();
+		ringTex.bind();
 		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		tex.enable();
+		ringTex.enable();
 		glu.gluQuadricTexture(quad, true);
 	    
 		// Draw the down-facing disc
 	    glu.gluDisk(quad, 0.75, 1.0, 50, 50);
 	    
 		// Disable texture
-		tex.disable();
+	    ringTex.disable();
 	    
 	    // Go back
 	    gl.glPopMatrix();
@@ -439,14 +443,14 @@ public class Planet implements IRenderable {
 		renderPlanet(gl, glu, quad);
 		
 		// If it's saturn, draw the ring (push & pop inside)
-//		if (name.equals(Planets.Saturn)) {
-//			renderRing(gl, glu, quad);
-//		}
+		if (name.equals(Planets.Saturn)) {
+			renderRing(gl, glu, quad);
+		}
 		
 		// If it's earth, draw the moon (push & pop inside)
-//		if (name.equals(Planets.Earth)) {
-//			moon.render(gl);
-//		}
+		if (name.equals(Planets.Earth)) {
+			moon.render(gl);
+		}
 		
 		// If it's tea time, put the kettle on the fire!
 //		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
@@ -471,7 +475,7 @@ public class Planet implements IRenderable {
 	public void init(GL gl) {
 		
 		// Load all the textures into memory
-		initTexture(gl, texFile());
+		initTexture(gl);
 		
 	}
 
@@ -554,12 +558,20 @@ public class Planet implements IRenderable {
 	 * Initializes the texture of the planet, and loads it into memory.
 	 * @param gl
 	 */
-	private void initTexture(GL gl, String texFileName) {
-		
-		File texFile = new File(texFileName);
+	private void initTexture(GL gl) {
 		
 		try {
-			tex = TextureIO.newTexture(texFile, true);
+			
+			// Load planet's texture
+			File texFile = new File(texFile());
+			planetTex = TextureIO.newTexture(texFile, true);
+			
+			// If saturn, load ring texture as well
+			if (name.equals(Planets.Saturn)) {
+				texFile = new File("Bitmaps/saturnRing.bmp");
+				ringTex = TextureIO.newTexture(texFile, true);
+			}
+			
 		} catch (GLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
