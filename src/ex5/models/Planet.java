@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLException;
@@ -31,7 +30,7 @@ public class Planet implements IRenderable {
 	private Planets name; 		// The planet's name
 	private Planet moon; 		// The planet's moon
 	private Texture tex; 		// The planet's texture
-	private int angle; 			// The planet's location along its orbit
+	private double time; 		// The (global) time
 	private boolean isAxes; 	// Show axes?
 	
 	/**
@@ -41,7 +40,7 @@ public class Planet implements IRenderable {
 	public Planet(Planets name) {
 		
 		this.name = name;
-		this.angle = randomAngle();
+		this.time = 0.0;
 		this.isAxes = true;
 		
 		// Only earth has a moon
@@ -65,6 +64,14 @@ public class Planet implements IRenderable {
 	 */
 	public Planet moon() {
 		return moon;
+	}
+	
+	/**
+	 * Setter for time.
+	 * @param time
+	 */
+	public void setTime(double time) {
+		this.time = time;
 	}
 	
 	/**
@@ -202,6 +209,48 @@ public class Planet implements IRenderable {
 	}
 	
 	/**
+	 * Returns the planet's orbital period (planetary year).
+	 * @return
+	 */
+	private double orbitalPeriod() {
+		switch (name) {
+			case Sun:		return 0.0;
+			case Mercury: 	return 87.97;
+			case Venus:		return 224.70;
+			case Earth:		return 365.26;
+			case Mars:		return 686.98;
+			case Jupiter:	return 4332.82;
+			case Saturn:	return 10755.70;
+			case Uranus:	return 30687.15;
+			case Neptune:	return 60190.03;
+			case Pluto:		return 908000.0;
+			case Moon:		return 0.5;
+			default:		return 0.0;
+		}
+	}
+	
+	/**
+	 * Returns the planet's self revolution (planetary day).
+	 * @return
+	 */
+	private double selfRevolution() {
+		switch (name) {
+			case Sun:		return 0.0;
+			case Mercury: 	return 58.65;
+			case Venus:		return 243.01;
+			case Earth:		return 1.0;
+			case Mars:		return 1.0;
+			case Jupiter:	return 0.41;
+			case Saturn:	return 0.44;
+			case Uranus:	return 0.72;
+			case Neptune:	return 0.67;
+			case Pluto:		return 6.38;
+			case Moon:		return 0.0;
+			default:		return 0.0;
+		}
+	}
+	
+	/**
 	 * Renders the planet.
 	 * @param gl
 	 * @param glu
@@ -212,13 +261,18 @@ public class Planet implements IRenderable {
 		// Changing stuff to draw the planet
 		gl.glPushMatrix();
 		
-		// Move the planet somewhere on its orbit
-		double x = this.orbitRadius() * Math.cos(angle);
-		double z = this.orbitRadius() * Math.sin(angle);
-		gl.glTranslated(x, 0.0, z);
+		// Rotate about Y to move the planet on its orbit
+		double orbitAngle = 360.0 * time / Math.log(this.orbitalPeriod()); 
+	    gl.glRotated(orbitAngle, 0.0, 1.0, 0.0);
+	    
+	    // Translate on X to move planet from center to orbit
+	    gl.glTranslated(this.orbitRadius(), 0.0, 0.0);
 		
-		// Rotate around Z to mimic axial tilt
+		// Rotate about Z for axial tilt
 		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
+		
+		// Rotate about Y for self revolution
+		gl.glRotated(360.0 * (time / this.selfRevolution()), 0.0, 1.0, 0.0);
 		
 		// Set material properties
 		float[] black = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -385,20 +439,20 @@ public class Planet implements IRenderable {
 		renderPlanet(gl, glu, quad);
 		
 		// If it's saturn, draw the ring (push & pop inside)
-		if (name.equals(Planets.Saturn)) {
-			renderRing(gl, glu, quad);
-		}
+//		if (name.equals(Planets.Saturn)) {
+//			renderRing(gl, glu, quad);
+//		}
 		
 		// If it's earth, draw the moon (push & pop inside)
-		if (name.equals(Planets.Earth)) {
-			moon.render(gl);
-		}
+//		if (name.equals(Planets.Earth)) {
+//			moon.render(gl);
+//		}
 		
 		// If it's tea time, put the kettle on the fire!
-		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
-			GLUT glut = new GLUT();
-			glut.glutSolidTeapot(0.2);	
-		}
+//		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
+//			GLUT glut = new GLUT();
+//			glut.glutSolidTeapot(0.2);	
+//		}
 		
 		// Draw the axes (no push - no need)
 		if (isAxes) {
@@ -409,11 +463,14 @@ public class Planet implements IRenderable {
 		gl.glPopMatrix();
 		gl.glPopMatrix();
 		
+		glu.gluDeleteQuadric(quad);
+		
 	}
 
 	@Override
 	public void init(GL gl) {
 		
+		// Load all the textures into memory
 		initTexture(gl, texFile());
 		
 	}
@@ -481,19 +538,6 @@ public class Planet implements IRenderable {
 	}
 	
 	/**
-	 * Returns a random angle between 0 and 360 degrees.
-	 * @return
-	 */
-	private int randomAngle() {
-		
-		int min = 0;
-		int max = 360;
-		Random rand = new Random();
-		return rand.nextInt((max - min) + 1) + min;
-		
-	}
-	
-	/**
 	 * Returns the current hour in 24h format.
 	 * @return
 	 */
@@ -523,9 +567,6 @@ public class Planet implements IRenderable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
-//		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 		
 	}
 	

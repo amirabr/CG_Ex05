@@ -28,10 +28,9 @@ import ex5.models.Empty;
 import ex5.models.IRenderable;
 import ex5.models.SolarSystem;
 
-
 public class App {
 	
-	static IRenderable[] models = {new Empty(), new Cube(), new SolarSystem()};
+	static IRenderable[] models = {new SolarSystem(), new Empty(), new Cube()};
 	static Point prevMouse;
 	static int currentModel;
 	static Frame frame;
@@ -110,13 +109,13 @@ public class App {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				prevMouse = e.getPoint();
-				viewer.startAnimation();
+//				viewer.startAnimation();
 				super.mousePressed(e);
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				viewer.stopAnimation();
+//				viewer.stopAnimation();
 				super.mouseReleased(e);
 			}
 		});

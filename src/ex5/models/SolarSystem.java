@@ -28,6 +28,7 @@ public class SolarSystem implements IRenderable {
 	private Planet[] planets; 		// Planets array
 	private boolean isLights; 		// Show light spheres?
 	private boolean isMessage; 		// Show special message?
+	private double time; 			// Time counter
 	
 	/**
 	 * Constructor.
@@ -36,6 +37,7 @@ public class SolarSystem implements IRenderable {
 		
 		isLights = false;
 		isMessage = false;
+		time = 0.0;
 		initPlanets();
 		
 	}
@@ -65,22 +67,34 @@ public class SolarSystem implements IRenderable {
 		GLU glu = new GLU();
 		GLUquadric quad = glu.gluNewQuadric();
 		
+		// How time flies
+		if (isAnimated()) {
+			time += 0.01;
+		}
+		
 		// Render the lights
 		renderLights(gl, glu, quad);
 		
 		// Render the planets
 		for (Planet p : planets) {
+			p.setTime(time);
 			p.render(gl);
 		}
 		
+		// What is this?
 		if (isMessage) {
 			showMessage(gl);
 		}
+		
+		glu.gluDeleteQuadric(quad);
 		
 	}
 
 	@Override
 	public void init(GL gl) {
+		
+		// Reset time
+		time = 0.0;
 
 		// Initialize all the planets
 		for (Planet p : planets) {
@@ -121,7 +135,7 @@ public class SolarSystem implements IRenderable {
 	@Override
 	public boolean isAnimated() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
