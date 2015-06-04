@@ -8,16 +8,21 @@
 package ex5.models;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GLException;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
 import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
 
 public class Planet implements IRenderable {
 	
@@ -25,6 +30,7 @@ public class Planet implements IRenderable {
 	
 	private Planets name; 		// The planet's name
 	private Planet moon; 		// The planet's moon
+	private Texture tex; 		// The planet's texture
 	private int angle; 			// The planet's location along its orbit
 	private boolean isAxes; 	// Show axes?
 	
@@ -51,6 +57,14 @@ public class Planet implements IRenderable {
 	 */
 	public Planets name() {
 		return name;
+	}
+	
+	/**
+	 * Getter for moon (used for remote initialization).
+	 * @return
+	 */
+	public Planet moon() {
+		return moon;
 	}
 	
 	/**
@@ -167,6 +181,27 @@ public class Planet implements IRenderable {
 	}
 	
 	/**
+	 * Returns the planet's texture bitmap file.
+	 * @return
+	 */
+	private String texFile() {
+		switch (name) {
+			case Sun:		return "Bitmaps/sunmap.bmp";
+			case Mercury: 	return "Bitmaps/mercurymap.bmp";
+			case Venus:		return "Bitmaps/venusmap.bmp";
+			case Earth:		return "Bitmaps/earthmap.bmp";
+			case Mars:		return "Bitmaps/marsmap.bmp";
+			case Jupiter:	return "Bitmaps/jupitermap.bmp";
+			case Saturn:	return "Bitmaps/saturnmap.bmp";
+			case Uranus:	return "Bitmaps/uranusmap.bmp";
+			case Neptune:	return "Bitmaps/neptunemap.bmp";
+			case Pluto:		return "Bitmaps/plutomap.bmp";
+			case Moon:		return "Bitmaps/moonmap.bmp";
+			default:		return "Bitmaps/moonmap.bmp";
+		}
+	}
+	
+	/**
 	 * Renders the planet.
 	 * @param gl
 	 * @param glu
@@ -195,8 +230,17 @@ public class Planet implements IRenderable {
 		// Rotate an extra 90 degrees to get the spheres up right
 		gl.glRotated(-90.0, 1.0, 0.0, 0.0);
 		
+		// Bind the texture
+		tex.bind();
+		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		glu.gluQuadricTexture(quad, true);
+		
 		// Draw the planet
 		glu.gluSphere(quad, this.planetRadius(), 50, 50);
+		
+		// Disable texture
+		gl.glDisable(GL.GL_TEXTURE_2D);
 		
 		// Rotate back
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
@@ -293,14 +337,35 @@ public class Planet implements IRenderable {
 		// so we need to rotate 90 degrees around X
 		gl.glRotated(90.0, 1.0, 0.0, 0.0);
 		
+		// Load the ring's texture instead of the planet's texture
+		initTexture(gl, "Bitmaps/saturnRing.bmp");
+		
+		// Bind the texture
+		tex.bind();
+		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		glu.gluQuadricTexture(quad, true);
+		
 		// Draw the up-facing disc
 		glu.gluDisk(quad, 0.75, 1.0, 50, 50);
 		
+		// Disable texture
+		gl.glDisable(GL.GL_TEXTURE_2D);
+		
 	    // Flip side
 		gl.glRotated(180.0, 0.0, 1.0, 0.0);
+		
+		// Bind the texture
+		tex.bind();
+		gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		glu.gluQuadricTexture(quad, true);
 	    
 		// Draw the down-facing disc
 	    glu.gluDisk(quad, 0.75, 1.0, 50, 50);
+	    
+		// Disable texture
+		gl.glDisable(GL.GL_TEXTURE_2D);
 	    
 	    // Go back
 	    gl.glPopMatrix();
@@ -348,7 +413,8 @@ public class Planet implements IRenderable {
 
 	@Override
 	public void init(GL gl) {
-		// TODO Auto-generated method stub
+		
+		initTexture(gl, texFile());
 		
 	}
 
@@ -437,6 +503,29 @@ public class Planet implements IRenderable {
 		Calendar calendar = GregorianCalendar.getInstance(); 	// creates a new calendar instance
 		calendar.setTime(date);   								// assigns calendar to given date 
 		return calendar.get(Calendar.HOUR_OF_DAY); 				// gets hour in 24h format
+		
+	}
+	
+	/**
+	 * Initializes the texture of the planet, and loads it into memory.
+	 * @param gl
+	 */
+	private void initTexture(GL gl, String texFileName) {
+		
+		File texFile = new File(texFileName);
+		
+		try {
+			tex = TextureIO.newTexture(texFile, true);
+		} catch (GLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+//		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 		
 	}
 	

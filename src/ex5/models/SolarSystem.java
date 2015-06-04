@@ -81,7 +81,16 @@ public class SolarSystem implements IRenderable {
 
 	@Override
 	public void init(GL gl) {
-		// TODO Auto-generated method stub
+
+		// Initialize all the planets
+		for (Planet p : planets) {
+			p.init(gl);
+			
+			// The moon too
+			if (p.name() == Planets.Earth) {
+				p.moon().init(gl);
+			}
+		}
 		
 	}
 
