@@ -73,6 +73,11 @@ public class Planet implements IRenderable {
 	 */
 	public void setTime(double time) {
 		this.time = time;
+		
+		// If it's earth, set the moon's time too
+		if (name.equals(Planets.Earth) && moon != null) {
+			moon.time = time;
+		}
 	}
 	
 	/**
@@ -162,7 +167,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 0.77;
 			case Neptune:	return 1.77;
 			case Pluto:		return 17.2;
-			case Moon:		return 20.0;
+			case Moon:		return 0.0;
 			default:		return 0.0;
 		}
 	}
@@ -215,7 +220,7 @@ public class Planet implements IRenderable {
 	 */
 	private double orbitalPeriod() {
 		switch (name) {
-			case Sun:		return 0.0;
+			case Sun:		return 0.0; 					// the sun doesn't move
 			case Mercury: 	return 87.97;
 			case Venus:		return 224.70;
 			case Earth:		return 365.26;
@@ -225,7 +230,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 30687.15;
 			case Neptune:	return 60190.03;
 			case Pluto:		return 908000.0;
-			case Moon:		return 0.5;
+			case Moon:		return Math.pow(Math.E, 30); 	// to get lunar cycle = 30
 			default:		return 0.0;
 		}
 	}
@@ -236,7 +241,7 @@ public class Planet implements IRenderable {
 	 */
 	private double selfRevolution() {
 		switch (name) {
-			case Sun:		return 0.0;
+			case Sun:		return Double.POSITIVE_INFINITY; 	// no self revolution
 			case Mercury: 	return 58.65;
 			case Venus:		return 243.01;
 			case Earth:		return 1.0;
@@ -246,7 +251,7 @@ public class Planet implements IRenderable {
 			case Uranus:	return 0.72;
 			case Neptune:	return 0.67;
 			case Pluto:		return 6.38;
-			case Moon:		return 1.0;
+			case Moon:		return Double.POSITIVE_INFINITY; 	// no self revolution
 			default:		return 0.0;
 		}
 	}
@@ -262,24 +267,19 @@ public class Planet implements IRenderable {
 		// Changing stuff to draw the planet
 		gl.glPushMatrix();
 		
-		// The sun doesn't move
-		if (!name.equals(Planets.Sun)) {
+		// Rotate about Y to move the planet on its orbit
+		double orbitAngle = 360.0 * time / Math.log(this.orbitalPeriod()); 
+	    gl.glRotated(orbitAngle, 0.0, 1.0, 0.0);
+	    
+	    // Translate on X to move planet from center to orbit
+	    gl.glTranslated(this.orbitRadius(), 0.0, 0.0);
 		
-			// Rotate about Y to move the planet on its orbit
-			double orbitAngle = 360.0 * time / Math.log(this.orbitalPeriod()); 
-		    gl.glRotated(orbitAngle, 0.0, 1.0, 0.0);
-		    
-		    // Translate on X to move planet from center to orbit
-		    gl.glTranslated(this.orbitRadius(), 0.0, 0.0);
-			
-			// Rotate about Z for axial tilt
-			gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
-			
-			// Rotate about Y for self revolution
-			double selfAngle = 360.0 * time / this.selfRevolution(); 
-			gl.glRotated(selfAngle, 0.0, 1.0, 0.0);
-			
-		}
+		// Rotate about Z for axial tilt
+		gl.glRotated(this.axialTilt(), 0.0, 0.0, 1.0);
+		
+		// Rotate about Y for self revolution
+		double selfAngle = 360.0 * time / this.selfRevolution(); 
+		gl.glRotated(selfAngle, 0.0, 1.0, 0.0);
 		
 		// Set material properties
 		float[] black = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -453,10 +453,10 @@ public class Planet implements IRenderable {
 		}
 		
 		// If it's tea time, put the kettle on the fire!
-//		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
-//			GLUT glut = new GLUT();
-//			glut.glutSolidTeapot(0.2);	
-//		}
+		if (name.equals(Planets.Sun) && getCurrentHour() == 16) {
+			GLUT glut = new GLUT();
+			glut.glutSolidTeapot(0.2);	
+		}
 		
 		// Draw the axes (no push - no need)
 		if (isAxes) {
